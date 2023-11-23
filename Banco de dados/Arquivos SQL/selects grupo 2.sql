@@ -22,3 +22,9 @@ where exists(select nome_cidade
             join escola e on cidade.cod_cidade = e.cod_cidade
             where nome_cidade = 'Recife')
 order by nome_prof;
+
+--busque o id e as notas dos alunos que as notas são maiores que 8
+select r.id_aluno, r.nota
+from resultados r
+left join matricula m on r.id_aluno = m.id_aluno
+where r.nota > 8;
