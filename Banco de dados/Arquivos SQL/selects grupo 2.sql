@@ -28,3 +28,10 @@ select r.id_aluno, r.nota
 from resultados r
 left join matricula m on r.id_aluno = m.id_aluno
 where r.nota > 8;
+
+--busque o nome, o id e o codigo da disciplina de todos os professores
+-- que dão aula no ensino medio
+select p.nome_prof, p.id_func, d.cod_disciplina
+    from professores p
+left join disciplinas d on d.cod_disciplina = p.cod_disciplina
+where etapa_ensino = 'Ensino Médio';
