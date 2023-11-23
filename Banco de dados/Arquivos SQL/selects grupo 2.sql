@@ -12,8 +12,8 @@ from resultados r
 group by r.serie
 order by avg(nota) desc;
 
--- Liste em ordem alfabetica o nome dos professores que
--- trabalham em escolas no recife, e suas disciplinas
+-- Liste o nome dos professores, em ordem alfabetica, e suas disciplinas que
+-- trabalham em escolas no recife
 select p.nome_prof, d.nome_disciplina
 from professores p
 left join disciplinas d on p.cod_disciplina = d.cod_disciplina
