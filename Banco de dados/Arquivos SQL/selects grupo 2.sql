@@ -6,11 +6,11 @@ from Aluno a
 where idade > 10;
 
 -- calcule a media de notas por série e exiba a serie
--- e o resultado, sendo o resultado em ordem crescente
+-- e o resultado, sendo o resultado em ordem decrescente
 select serie, avg(nota)
 from resultados r
 group by r.serie
-order by avg(nota);
+order by avg(nota) desc;
 
 -- Liste em ordem alfabetica o nome dos professores que
 -- trabalham em escolas no recife, e suas disciplinas
