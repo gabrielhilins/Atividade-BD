@@ -6,7 +6,7 @@ from Aluno a
 where idade > 10;
 
 -- calcule a media de notas por série e exiba a serie
--- e o resultado em ordem crescente
+-- e o resultado, sendo o resultado em ordem crescente
 select serie, avg(nota)
 from resultados r
 group by r.serie
