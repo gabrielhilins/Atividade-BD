@@ -20,6 +20,14 @@ from resultados
 group by serie
 order by serie;
 
+-- Busque a  quantidade de alunos matriculados por série em cada escola de Boa Vista.
+SELECT E.cod_escola, E.nome_escola, S.serie, COUNT(M.id_aluno) as quantidade_alunos
+FROM Escola E
+JOIN Sala S ON E.cod_escola = S.cod_escola
+LEFT JOIN Matricula M ON S.cod_escola = M.cod_escola AND S.num_sala = M.num_sala AND S.serie = M.serie
+WHERE E.cod_cidade IN (SELECT cod_cidade FROM Cidade WHERE nome_cidade = 'Boa Vista')
+GROUP BY E.cod_escola, E.nome_escola, S.serie;
+
 -- JOIN
 -- Liste todos os funcionários de cada escola, incluindo aqueles que não têm um cargo específico
 SELECT E.nome_escola, F.id_func, F.cod_escola, A.nome_adm, S.nome_saude, SG.nome_seg
@@ -48,3 +56,16 @@ where a.id_aluno in (select m.id_aluno
                      from matricula as m
                      where m.serie = '3C')
 order by nome_aluno;
+
+-- Selecione os ids dos professores que lecionam no Ensino Médio e desses professores, os que lecionam Exatas (MAtemática, Física, Química, Biologia)
+select id_func, nome_prof, cod_disciplina
+from professores
+where etapa_ensino = 'Ensino Médio' and cod_disciplina = 2 or cod_disciplina = 4 or cod_disciplina = 5 or cod_disciplina = 6;
+
+-- Selecione as escolas que nao possuem funcionários do tipo segurança
+SELECT nome_escola, cod_escola
+FROM Escola
+WHERE cod_escola NOT IN (
+    SELECT DISTINCT cod_escola
+    FROM seguranca
+);
