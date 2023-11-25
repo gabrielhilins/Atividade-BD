@@ -1,5 +1,6 @@
--- 10 Buscas
 -- Alunos: Arthur Vinícius e Gabriel Henrique
+
+-- 10 Buscas pro outro grupo: Luiz Henrique e Yuri Catunda
 
 -- Questao 1
 -- Busque os nomes dos alunos que tenham 3 anos e deixe em ordem alfabética
@@ -7,28 +8,38 @@
     from aluno
     where idade = 3;
 
---Questao 2
--- Selecione o id dos alunos que estão no ensino médio e na série '3C'
-select id_aluno
-from matricula
-where etapa_ensino = 'Ensino Médio' and serie = '3C';
-
--- GROUP BY
+-- Questao 2
 -- Faça uma busca pela média das notas por série
 select serie, avg(nota) as média
 from resultados
 group by serie
 order by serie;
 
--- Busque a  quantidade de alunos matriculados por série em cada escola de Boa Vista.
-SELECT E.cod_escola, E.nome_escola, S.serie, COUNT(M.id_aluno) as quantidade_alunos
-FROM Escola E
-JOIN Sala S ON E.cod_escola = S.cod_escola
-LEFT JOIN Matricula M ON S.cod_escola = M.cod_escola AND S.num_sala = M.num_sala AND S.serie = M.serie
-WHERE E.cod_cidade IN (SELECT cod_cidade FROM Cidade WHERE nome_cidade = 'Boa Vista')
-GROUP BY E.cod_escola, E.nome_escola, S.serie;
+--Questao 3
+-- Selecione o id dos alunos que estão no ensino médio e na série '3C'
+select id_aluno
+from matricula
+where etapa_ensino = 'Ensino Médio' and serie = '3C';
 
--- JOIN
+-- Questao 4
+-- Selecione as escolas que nao possuem funcionários do tipo segurança
+SELECT nome_escola, cod_escola
+FROM Escola
+WHERE cod_escola NOT IN (
+    SELECT DISTINCT cod_escola
+    FROM seguranca
+);
+
+-- Questao 5
+-- Busque a  quantidade de alunos matriculados por série em cada escola de Boa Vista.
+SELECT E.nome_escola, S.serie, COUNT(M.id_aluno) as quantidade_alunos
+FROM Escola as E
+JOIN Sala as S ON E.cod_escola = S.cod_escola
+LEFT JOIN Matricula as M ON S.cod_escola = M.cod_escola AND S.num_sala = M.num_sala AND S.serie = M.serie
+WHERE E.cod_cidade IN (SELECT cod_cidade FROM Cidade WHERE nome_cidade = 'Boa Vista')
+GROUP BY E.nome_escola, S.serie;
+
+--Questao 6
 -- Liste todos os funcionários de cada escola, incluindo aqueles que não têm um cargo específico
 SELECT E.nome_escola, F.id_func, F.cod_escola, A.nome_adm, S.nome_saude, SG.nome_seg
 FROM Escola E
@@ -37,35 +48,37 @@ LEFT JOIN Administradores A ON F.id_func = A.id_func AND F.cod_escola = A.cod_es
 LEFT JOIN Saude S ON F.id_func = S.id_func AND F.cod_escola = S.cod_escola
 LEFT JOIN Seguranca SG ON F.id_func = SG.id_func AND F.cod_escola = SG.cod_escola;
 
--- Selecione os nomes e id dos alunos e profressores que estão em salas de São Paulo
-SELECT A.id_aluno, A.nome_aluno, P.nome_prof AS nome_professor, P.id_func AS id_prof
-FROM Aluno A
-JOIN Matricula M ON A.id_aluno = M.id_aluno
-JOIN Sala S ON M.cod_escola = S.cod_escola AND M.num_sala = S.num_sala AND M.serie = S.serie
-JOIN Professores P ON S.cod_escola = P.cod_escola AND S.num_sala = P.nu_sala AND S.serie = P.serie
-JOIN Escola E ON S.cod_escola = E.cod_escola
-JOIN Cidade C ON E.cod_cidade = C.cod_cidade
-WHERE C.nome_cidade = 'São Paulo';
+-- Questao 7
+-- Selecione os nomes dos professores que lecionam em salas do Ensino Médio em escolas com situação de funcionamento igual a 1
+select p.nome_prof, p.etapa_ensino, e.cod_escola, e.situacao_funcionamento
+from professores as p
+join escola e on p.cod_escola = e.cod_escola
+where etapa_ensino = 'Ensino Médio' and e.cod_escola in (select e.cod_escola
+                                                         from escola as e
+                                                         where e.situacao_funcionamento = '1');
 
--- SELECT ANINHADO
--- Busque o id do aluno(a) que estuda numa serie '3C' e o nome dele(a)(s) (ordene por nome)
+--Questao 8
+-- Busque a  quantidade de alunos matriculados por série em cada escola de Boa Vista.
+SELECT E.nome_escola, S.serie, COUNT(M.id_aluno) as quantidade_alunos
+FROM Escola as E
+JOIN Sala as S ON E.cod_escola = S.cod_escola
+LEFT JOIN Matricula as M ON S.cod_escola = M.cod_escola AND S.num_sala = M.num_sala AND S.serie = M.serie
+WHERE E.cod_cidade IN (SELECT cod_cidade FROM Cidade WHERE nome_cidade = 'Boa Vista')
+GROUP BY E.nome_escola, S.serie;
 
-select a.nome_aluno, a.id_aluno
+-- Questao 9
+-- Selecione os nomes dos alunos que tiveram como rendimento_escolar 'Reprovados' e os nomes das suas respectivas escolas
+SELECT nome_aluno, rendimento_escolar, nome_escola, tem_internet
 from aluno as a
-where a.id_aluno in (select m.id_aluno
-                     from matricula as m
-                     where m.serie = '3C')
-order by nome_aluno;
+join matricula m on a.id_aluno = m.id_aluno
+join public.resultados r on a.id_aluno = r.id_aluno
+join escola e on m.cod_escola = e.cod_escola
+where rendimento_escolar = 'Reprovado' and tem_internet = 1;
 
--- Selecione os ids dos professores que lecionam no Ensino Médio e desses professores, os que lecionam Exatas (MAtemática, Física, Química, Biologia)
-select id_func, nome_prof, cod_disciplina
-from professores
-where etapa_ensino = 'Ensino Médio' and cod_disciplina = 2 or cod_disciplina = 4 or cod_disciplina = 5 or cod_disciplina = 6;
-
--- Selecione as escolas que nao possuem funcionários do tipo segurança
-SELECT nome_escola, cod_escola
-FROM Escola
-WHERE cod_escola NOT IN (
-    SELECT DISTINCT cod_escola
-    FROM seguranca
-);
+--Questao 10
+-- Selecione os ids dos professores que lecionam no Ensino Médio e desses professores, os que lecionam Exatas (Matemática, Física, Química, Biologia)
+SELECT p.id_func, p.nome_prof, d.nome_disciplina
+FROM Professores as p
+JOIN disciplinas d on d.cod_disciplina = p.cod_disciplina
+WHERE P.etapa_ensino = 'Ensino Médio'
+    AND D.nome_disciplina IN ('Matemática', 'Física', 'Química', 'Biologia');
